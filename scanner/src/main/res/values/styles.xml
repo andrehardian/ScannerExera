@@ -1,0 +1,16 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="button_x">
+        <item name="android:layout_marginTop">@dimen/margin_bttop</item>
+        <item name="android:layout_marginLeft">@dimen/margin_bttop</item>
+        <item name="android:layout_marginRight">@dimen/margin_bttop</item>
+        <item name="android:layout_width">@dimen/x_size</item>
+        <item name="android:layout_height">@dimen/x_size</item>
+    </style>
+
+</resources>

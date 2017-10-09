@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="margin_bttop">16dp</dimen>
+    <dimen name="margin_logotop">18dp</dimen>
+    <dimen name="margin_rlbt">20dp</dimen>
+    <dimen name="margin_bta">21dp</dimen>
+    <dimen name="margin_shut">10dp</dimen>
+    <dimen name="margin_textbt">12dp</dimen>
+
+    <dimen name="x_size">20dp</dimen>
+    <dimen name="powered_size">109dp</dimen>
+    <dimen name="rotate_width">24dp</dimen>
+    <dimen name="rotate_height">22dp</dimen>
+    <dimen name="flash_width">21dp</dimen>
+    <dimen name="flash_height">28dp</dimen>
+    <dimen name="gallery_width">38dp</dimen>
+    <dimen name="gallery_height">28dp</dimen>
+    <dimen name="shutter_size">50dp</dimen>
+    <dimen name="crop_height">60dp</dimen>
+
+</resources>
