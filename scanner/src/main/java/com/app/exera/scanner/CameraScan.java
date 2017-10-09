@@ -53,6 +53,8 @@ public class CameraScan extends AppCompatActivity implements Camera.AutoFocusCal
     }
 
     private void close() {
+        camera.cancelAutoFocus();
+        camera.setPreviewCallback(null);
         camera.release();
         finish();
     }
