@@ -2,11 +2,13 @@ package com.app.exera.scanner;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -19,6 +21,9 @@ import net.sourceforge.zbar.Image;
 import net.sourceforge.zbar.ImageScanner;
 import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.app.exera.scanner.utils.ScannerConstant.SCAN_MODES;
 import static com.app.exera.scanner.utils.ScannerConstant.SCAN_RESULT;
@@ -33,6 +38,7 @@ public class CameraScan extends AppCompatActivity implements Camera.AutoFocusCal
     private CameraPreview cameraPreviewer;
     private UtilsCamera utilsCamera;
     private ImageScanner mScanner;
+    private static final int FOCUS_AREA_SIZE = 300;
 
 
     @Override
@@ -50,6 +56,15 @@ public class CameraScan extends AppCompatActivity implements Camera.AutoFocusCal
         utilsCamera = new UtilsCamera(this);
         permissionMarshmellow = new PermissionMarshmellow(this);
         setupScanner();
+        cameraPreview.setOnTouchListener((View view, MotionEvent motionEvent) ->
+                cameraPreview(motionEvent));
+
+    }
+
+    protected boolean cameraPreview(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
+            focusOnTouch(event);
+        return true;
     }
 
     private void close() {
@@ -83,6 +98,48 @@ public class CameraScan extends AppCompatActivity implements Camera.AutoFocusCal
 
     }
 
+    private void focusOnTouch(MotionEvent event) {
+        if (camera != null) {
+
+            Camera.Parameters parameters = camera.getParameters();
+            if (parameters.getMaxNumMeteringAreas() > 0) {
+                Rect rect = calculateFocusArea(event.getX(), event.getY());
+                if (parameters.getSupportedFocusModes() != null && parameters.getSupportedFocusModes().
+                        contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                }
+                List<Camera.Area> meteringAreas = new ArrayList<Camera.Area>();
+                meteringAreas.add(new Camera.Area(rect, 800));
+                parameters.setFocusAreas(meteringAreas);
+
+                camera.setParameters(parameters);
+                camera.autoFocus(this);
+            } else {
+                camera.autoFocus(this);
+            }
+        }
+    }
+
+    private Rect calculateFocusArea(float x, float y) {
+        int left = clamp(Float.valueOf((x / cameraPreview.getWidth()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+        int top = clamp(Float.valueOf((y / cameraPreview.getHeight()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+
+        return new Rect(left, top, left + FOCUS_AREA_SIZE, top + FOCUS_AREA_SIZE);
+    }
+
+    private int clamp(int touchCoordinateInCameraReper, int focusAreaSize) {
+        int result;
+        if (Math.abs(touchCoordinateInCameraReper) + focusAreaSize / 2 > 1000) {
+            if (touchCoordinateInCameraReper > 0) {
+                result = 1000 - focusAreaSize / 2;
+            } else {
+                result = -1000 + focusAreaSize / 2;
+            }
+        } else {
+            result = touchCoordinateInCameraReper - focusAreaSize / 2;
+        }
+        return result;
+    }
 
 
     @Override
