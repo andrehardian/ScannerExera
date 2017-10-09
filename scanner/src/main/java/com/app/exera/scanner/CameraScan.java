@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.app.exera.scanner.utils.PermissionMarshmellow;
@@ -25,6 +26,7 @@ import static com.app.exera.scanner.utils.ScannerConstant.SCAN_RESULT_TYPE;
 
 public class CameraScan extends AppCompatActivity implements Camera.AutoFocusCallback {
     private FrameLayout cameraPreview;
+    private Button close;
     private PermissionMarshmellow permissionMarshmellow;
 
     private Camera camera;
@@ -43,9 +45,16 @@ public class CameraScan extends AppCompatActivity implements Camera.AutoFocusCal
     private void initializeContent() {
         setContentView(R.layout.activity_camera_scan);
         cameraPreview = findView(R.id.camera_preview);
+        close = findView(R.id.close);
+        close.setOnClickListener((view -> close()));
         utilsCamera = new UtilsCamera(this);
         permissionMarshmellow = new PermissionMarshmellow(this);
         setupScanner();
+    }
+
+    private void close() {
+        camera.release();
+        finish();
     }
 
     protected <K extends View> K findView(int id) {
