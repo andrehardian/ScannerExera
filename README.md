@@ -16,8 +16,8 @@ allprojects {
 Add dependencies :
 
 ```
-dependencies {
-     compile 'com.github.andrehardian:ScannerExera:1.0.4'
+dependencies 5
+     compile 'com.github.andrehardian:ScannerExera:1.0.5'
 }
 
 ```
