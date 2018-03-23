@@ -5,6 +5,7 @@ android scanner camera library from laxus exera technology
 
 ### Setting project android studio 3.0.1
 File -> project structure -> app/sample -> source compability and target compability use 1.8
+![project structure](https://github.com/andrehardian/ScannerExera/blob/master/art/project%20structure.png)
 
 ### Include Library
 Add it in your root build.gradle at the end of repositories:
