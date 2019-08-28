@@ -1,7 +1,14 @@
 package com.app.exera.scanner.utils;
 
 import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.net.Uri;
+import android.provider.MediaStore;
 
 import net.sourceforge.zbar.Config;
 import net.sourceforge.zbar.ImageScanner;
@@ -15,19 +22,12 @@ import static com.app.exera.scanner.utils.ScannerConstant.SCAN_MODES;
  */
 public class UtilsCamera {
 
-    private final Activity activity;
-
-    public static String resultTagCamera = "camera";
     private Camera camera = null;
 
-    public UtilsCamera(Activity activity) {
-        this.activity = activity;
-    }
-
-    public Camera getCameraInstance() {
+    public Camera getCameraInstance(int cameraOn) {
         try {
             releaseCameraAndPreview();
-            camera = Camera.open();
+            camera = Camera.open(cameraOn);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,7 +41,5 @@ public class UtilsCamera {
             camera = null;
         }
     }
-
-
 
 }

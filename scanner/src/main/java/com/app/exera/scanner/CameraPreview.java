@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.os.Build;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -22,13 +23,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Camera.Size previewSize;
     private final Camera.AutoFocusCallback autoFocus;
     private final Camera.PreviewCallback previewCallback;
+    private final boolean istab;
 
 
-    public CameraPreview(Context context, Camera camera, Camera.AutoFocusCallback autoFocus, Camera.PreviewCallback previewCallback) {
+    public CameraPreview(Context context, Camera camera, Camera.AutoFocusCallback autoFocus,
+                                Camera.PreviewCallback previewCallback, boolean istab) {
         super(context);
         this.camera = camera;
         this.autoFocus = autoFocus;
         this.previewCallback = previewCallback;
+        this.istab = istab;
         surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -38,23 +42,30 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
 
-    public CameraPreview(Context context, AttributeSet attrs, Camera.AutoFocusCallback autoFocus, Camera.PreviewCallback previewCallback) {
+    public CameraPreview(Context context, AttributeSet attrs, Camera.AutoFocusCallback autoFocus,
+                                Camera.PreviewCallback previewCallback, boolean istab) {
         super(context, attrs);
         this.autoFocus = autoFocus;
         this.previewCallback = previewCallback;
+        this.istab = istab;
     }
 
-    public CameraPreview(Context context, AttributeSet attrs, int defStyleAttr, Camera.AutoFocusCallback autoFocus, Camera.PreviewCallback previewCallback) {
+    public CameraPreview(Context context, AttributeSet attrs, int defStyleAttr,
+                                Camera.AutoFocusCallback autoFocus, Camera.PreviewCallback previewCallback, boolean istab) {
         super(context, attrs, defStyleAttr);
         this.autoFocus = autoFocus;
         this.previewCallback = previewCallback;
+        this.istab = istab;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public CameraPreview(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes, Camera.AutoFocusCallback autoFocus, Camera.PreviewCallback previewCallback) {
+    public CameraPreview(Context context, AttributeSet attrs, int defStyleAttr,
+                                int defStyleRes, Camera.AutoFocusCallback autoFocus,
+                                Camera.PreviewCallback previewCallback, boolean istab) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.autoFocus = autoFocus;
         this.previewCallback = previewCallback;
+        this.istab = istab;
     }
 
     @Override
@@ -89,12 +100,21 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             parameters.setPictureFormat(PixelFormat.JPEG);
 
             try {
-                parameters.setPreviewSize(previewSize.width, previewSize.height);
+                if (istab) {
+                    parameters.setPreviewSize(previewSize.height, previewSize.width);
+                } else {
+                    parameters.setPreviewSize(previewSize.width, previewSize.height);
+
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
             try {
-                parameters.setPictureSize(previewSize.width, previewSize.height);
+                if (istab) {
+                    parameters.setPictureSize(previewSize.height, previewSize.width);
+                } else {
+                    parameters.setPictureSize(previewSize.width, previewSize.height);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -106,13 +126,39 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
 
             camera.setPreviewCallback(previewCallback);
-            camera.autoFocus(autoFocus);
+            scheduleAutoFocus();
             camera.setPreviewDisplay(surfaceHolder);
             camera.startPreview();
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }
     }
+
+    private void scheduleAutoFocus() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setAutoFocus();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 1000);
+    }
+
+    private void setAutoFocus() {
+        List<String> supportedFocusModes = camera.getParameters().getSupportedFocusModes();
+        boolean hasAutoFocus = supportedFocusModes != null &&
+                supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO);
+        if (hasAutoFocus)
+            try {
+                camera.autoFocus(autoFocus);
+            } catch (RuntimeException e) {
+                scheduleAutoFocus();
+            }
+    }
+
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -160,6 +206,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
         return optimalSize;
     }
+
 
 
 }
