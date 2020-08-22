@@ -1,11 +1,12 @@
 package com.app.exera.scanner;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.exera.scanner.utils.ScannerListener;
 

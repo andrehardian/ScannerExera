@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.MotionEvent;
+
+import androidx.annotation.NonNull;
 
 import com.app.exera.scanner.utils.CameraEvent;
 import com.app.exera.scanner.utils.CameraEventListener;
