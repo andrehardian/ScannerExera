@@ -21,7 +21,7 @@ Add dependencies :
 
 ```
 dependencies 5
-     implementation 'com.github.andrehardian:ScannerExera:1.0.5'
+     implementation 'com.github.andrehardian:ScannerExera:1.0.6'
 }
 
 ```
