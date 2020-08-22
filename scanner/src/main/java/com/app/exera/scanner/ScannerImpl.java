@@ -77,8 +77,13 @@ public class ScannerImpl implements ScannerPres, CameraEventListener {
         if (camera != null) {
             camera.setDisplayOrientation(90);
             cameraPreviewer = new CameraPreview(activity, camera, cameraEvent,
-                    (byte[] bytes, Camera camera) ->
-                            callBackPreview(bytes, camera), false);
+                    new Camera.PreviewCallback() {
+
+                        @Override
+                        public void onPreviewFrame(byte[] bytes, Camera camera) {
+                            callBackPreview(bytes, camera);
+                        }
+                    }, false);
             viewAct.getCameraView().addView(cameraPreviewer);
         }
     }
@@ -132,7 +137,12 @@ public class ScannerImpl implements ScannerPres, CameraEventListener {
 
     @Override
     public void onAutoFocus() {
-        new Handler().postDelayed(() -> setFocusCamera(), 1000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setFocusCamera();
+            }
+        }, 1000);
     }
 
     private void setFocusCamera() {

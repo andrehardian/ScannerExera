@@ -27,9 +27,18 @@ public class CameraScan extends AppCompatActivity implements ScannerView{
         impl.setViewAct(this);
         cameraPreview = findView(R.id.camera_preview);
         close = findView(R.id.close);
-        close.setOnClickListener((view -> close()));
-        cameraPreview.setOnTouchListener((View view, MotionEvent motionEvent) ->
-                cameraPreview(motionEvent));
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                close();
+            }
+        });
+        cameraPreview.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return cameraPreview(motionEvent);
+            }
+        });
         impl.init(this);
 
     }
